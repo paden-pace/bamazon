@@ -1,0 +1,24 @@
+{
+  "name": "bamazon",
+  "version": "1.0.0",
+  "description": "a basic store front CLI app",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paden-pace/bamazon.git"
+  },
+  "keywords": [
+    "CLI",
+    "node.js",
+    "MySQL"
+  ],
+  "author": "Paden Pace",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paden-pace/bamazon/issues"
+  },
+  "homepage": "https://github.com/paden-pace/bamazon#readme"
+}
