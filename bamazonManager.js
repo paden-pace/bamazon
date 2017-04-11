@@ -11,7 +11,17 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+var allProducts = [];
+
 var bamMan = function () {
+    var query = "SELECT * FROM products";
+    connection.query(query, function(err, results){
+        if(err) throw err;
+        //console.log("test");
+        for (var i = 0; i <results.length; i++){
+            allProducts.push(results[i].product_name);
+        };
+    });
     console.log("Hello Manager, what would you like to do?");
     inquirer.prompt([
         {
@@ -87,18 +97,71 @@ var addInventory = function(){
         {
             type: "list",
             message: "What would item would you like to increase stock?",
-            choices: ["Products for Sale", "View Low Inventory","Add To Inventory", "Add New Product", "exit"],
+            choices: allProducts,
             name: "addItem"
+        },
+        {
+            type: "input",
+            message: "How many would you like to add?",
+            name: "addQuant"
         }
     ]).then(function(man) {
         console.log(man.addItem);
+        connection.query('Select * FROM products WHERE product_name = ?', [man.addItem], function (err,results){
+            var trueQuant = results[0].stock_quantity;
+            var trueQuantInt = parseInt(trueQuant, 10);
+            var addQuantInt = parseInt(man.addQuant, 10);
+            console.log("Request: " + addQuantInt);
+            console.log("Amount in Stock: " + trueQuantInt);
+            var newQuant = (trueQuantInt + addQuantInt);
+            connection.query('UPDATE products SET ? WHERE ?', [
+                {stock_quantity: newQuant},
+                {product_name: man.addItem}
+                ], function(err, results){
+                    console.log("New Quantity in Stock is: " + newQuant);
+                    if(err) throw err;
+                });
+        });
     });
 };
 
+
+
 var newProduct = function(){
     console.log("Add Product")
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What product would you like to add?",
+            name: "product"
+        },
+        {
+            type: "input",
+            message: "What department will that be added to?",
+            name: "dept"
+        },
+        {
+            type: "input",
+            message: "What is the price?",
+            name: "price"
+        },
+        {
+            type: "input",
+            message: "How many would you like to add?",
+            name: "quant"
+        }
+    ]).then(function(addition) {
+        var additionQuantInt = parseInt(addition.quant);
+        var additionPriceInt = parseInt(addition.price).toFixed(2);
+        connection.query('INSERT INTO products SET ?',
+        {product_name: addition.product, department_name: addition.dept, price: additionPriceInt, stock_quantity: additionQuantInt},
+        function(err, results){
+            console.log("New Product " + addition.product + " has been added to inventory.");
+            if(err) throw err;
+        });
+        //console.log(addition.product +  " - " + addition.dept+  " - "+ addition.price+  " - "+ addition.quant);
+    });
 };
-
 
 
 
