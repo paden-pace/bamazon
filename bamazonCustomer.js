@@ -4,6 +4,8 @@ var inquirer = require("fs");
 var inquirer = require("inquirer");
 var mysql = require('mysql');
 
+var bamMan = require('./bamazonManager');
+
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
@@ -43,7 +45,7 @@ var options = function(){
                 //options();
                 break;
             case "Administrator":
-                admin();
+                bamMan();
                 
             case "exit":
                 break;
@@ -186,3 +188,4 @@ var makeSelect = function() {
 
 
 options();
+
