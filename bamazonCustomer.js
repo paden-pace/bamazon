@@ -5,6 +5,7 @@ var inquirer = require("inquirer");
 var mysql = require('mysql');
 
 var bamMan = require('./bamazonManager');
+var bamSup = require('./bamazonSupervisor');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -21,43 +22,7 @@ var newAll = [];
 //     console.log("connected as id " + connection.threadId);
 // });
 
-var options = function(){
-    connection.query('SELECT department_name, count(department_name) FROM products GROUP BY department_name HAVING count(*) >= 1 ORDER BY count(department_name) DESC', function(err, results){
-        if(err) throw err;
-        for (var i = 0; i <results.length; i++){
-            //console.log("Dept: " + results[i].department_name);
-            newAll.push(results[i].department_name);
-            //console.log(newAll);
-            //console.log("---------------------------------");
-        };
-    });
-  inquirer.prompt([
-        {
-            type: "list",
-            message: "Who are you?",
-            choices: ["Customer", "Administrator", "exit"],
-            name: "selection"
-        }
-    ]).then(function(user) {
-        switch (user.selection) {
-            case "Customer":
-                cust();
-                //options();
-                break;
-            case "Administrator":
-                bamMan();
-                
-            case "exit":
-                break;
-        }
-    });
-};
-
-var admin = function() {
-    console.log("Hello Admin!");
-};
-
-var cust = function() {
+var bamCust = function() {
     console.log("Welcome to this super trendy store!");
     inquirer.prompt([
         {
@@ -132,24 +97,6 @@ var purchaseReq = function (deptListItem, deptQuant){
 };
 
 var makeSelect = function() {
-
-    
-    // connection.query('Select * FROM products', function (err,results){
-    //     //console.log(results[0].RowDataPacket);
-    //     var newAll = [];
-    //     for (i=0; i<results.length; i++){
-    //         var j=0; 
-    //         console.log("-----------j-----------");
-    //         if (j<=newAll.length){ 
-    //             if (results[i].department_name != newAll[j]){
-    //                 newAll.push(results[i].department_name);
-    //                 console.log("-----------------------");
-    //                 console.log(newAll);
-    //                 j++;
-    //             };
-    //         };
-    //     };
-    // });
     inquirer.prompt([
         {
             type: "list",
@@ -186,6 +133,4 @@ var makeSelect = function() {
     });
 };
 
-
-options();
-
+module.exports = bamCust;

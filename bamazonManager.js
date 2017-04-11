@@ -3,6 +3,9 @@ var inquirer = require("fs");
 var inquirer = require("inquirer");
 var mysql = require('mysql');
 
+var bamSup = require('./bamazonSupervisor');
+var bamCust = require('./bamazonCustomer');
+
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
