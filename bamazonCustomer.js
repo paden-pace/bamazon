@@ -12,12 +12,23 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+var newAll = [];
+
 // connection.connect(function (err) {
 //     if (err) throw (error);
 //     console.log("connected as id " + connection.threadId);
 // });
 
 var options = function(){
+    connection.query('SELECT department_name, count(department_name) FROM products GROUP BY department_name HAVING count(*) >= 1 ORDER BY count(department_name) DESC', function(err, results){
+        if(err) throw err;
+        for (var i = 0; i <results.length; i++){
+            //console.log("Dept: " + results[i].department_name);
+            newAll.push(results[i].department_name);
+            //console.log(newAll);
+            //console.log("---------------------------------");
+        };
+    });
   inquirer.prompt([
         {
             type: "list",
@@ -119,17 +130,29 @@ var purchaseReq = function (deptListItem, deptQuant){
 };
 
 var makeSelect = function() {
+
+    
     // connection.query('Select * FROM products', function (err,results){
+    //     //console.log(results[0].RowDataPacket);
     //     var newAll = [];
     //     for (i=0; i<results.length; i++){
-    //         newAll.push(results[i].department_name);
+    //         var j=0; 
+    //         console.log("-----------j-----------");
+    //         if (j<=newAll.length){ 
+    //             if (results[i].department_name != newAll[j]){
+    //                 newAll.push(results[i].department_name);
+    //                 console.log("-----------------------");
+    //                 console.log(newAll);
+    //                 j++;
+    //             };
+    //         };
     //     };
     // });
     inquirer.prompt([
         {
             type: "list",
             message: "What department do you want to look into?",
-            choices: ["Clothing", "Electronics", "Furniture"],
+            choices: newAll,
             name: "dept"
         }
     ]).then(function(select) {
