@@ -1,11 +1,11 @@
 
-var inquirer = require("fs");
-//var inquirer = require("file-share");
+var fs = require("fs");
 var inquirer = require("inquirer");
 var mysql = require('mysql');
 
 var bamMan = require('./bamazonManager');
 var bamSup = require('./bamazonSupervisor');
+var bamInd = require('./bamazonIndex.js');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -16,13 +16,15 @@ var connection = mysql.createConnection({
 });
 
 var newAll = [];
-
-// connection.connect(function (err) {
-//     if (err) throw (error);
-//     console.log("connected as id " + connection.threadId);
-// });
+var curDept;
 
 var bamCust = function() {
+    connection.query('SELECT department_name, count(department_name) FROM products GROUP BY department_name HAVING count(*) >= 1 ORDER BY count(department_name) DESC', function(err, results){
+        if(err) throw err;
+        for (var i = 0; i <results.length; i++){
+            newAll.push(results[i].department_name);
+        };
+    });
     console.log("Welcome to this super trendy store!");
     inquirer.prompt([
         {
@@ -35,12 +37,10 @@ var bamCust = function() {
         switch (user.selection) {
             case "See Items":
                 seeItems();
-                //options();
                 break;
                 
             case "Make A Selection":
                 makeSelect();
-                //options();
                 break;
 
             case "exit":
@@ -52,7 +52,6 @@ var seeItems = function() {
     var query = "SELECT * FROM products";
     connection.query(query, function(err, results){
         if(err) throw err;
-        //console.log("test");
         for (var i = 0; i <results.length; i++){
             console.log("---------------------------------");
             console.log("Product Name: " + results[i].product_name);
@@ -67,8 +66,7 @@ var seeItems = function() {
 var purchaseReq = function (deptListItem, deptQuant){
     connection.query('Select * FROM products WHERE product_name = ?', [deptListItem], function (err,results){
         var trueQuant = results[0].stock_quantity;
-        // console.log("Request: " + dept.quant);
-        // console.log("Amount in Stock: " + trueQuant);
+        var truePrice = results[0].price;
         if (deptQuant > trueQuant){
             console.log("Looks like we don't have enough in stock.");
             console.log("We only have: " + trueQuant);
@@ -91,6 +89,13 @@ var purchaseReq = function (deptListItem, deptQuant){
                 ], function(err, results){
                     if(err) throw err;
                 });
+            var sale = truePrice * deptQuant;
+            connection.query('UPDATE departments SET ? WHERE ?', [
+                {total_sales: sale},
+                {department_name: curDept}
+                ], function(err, results){
+                    if(err) throw err;
+                });
             console.log("New Quantity in Stock is: " + newQuant);
         };
     });
@@ -105,11 +110,9 @@ var makeSelect = function() {
             name: "dept"
         }
     ]).then(function(select) {
-        //console.log ("Item: "+ select.item);
-        //console.log ("Department: " + select.dept);
-        //console.log ("Quantity: " + select.quant);
         connection.query('Select * FROM products WHERE department_name = ?', [select.dept], function (err,results){
             var newDept = [];
+            curDept = select.dept;
             for (i=0; i<results.length; i++){
                 newDept.push(results[i].product_name);
             };
@@ -126,11 +129,13 @@ var makeSelect = function() {
                     name: "quant"
                 }
             ]).then(function(dept) {
-                console.log(dept.listItem);
                 purchaseReq(dept.listItem, dept.quant);
+                fs.appendFile("salesLog.txt", dept.quant + " - " + dept.listItem + "s have been purchased." + "\r\n");
             });
         });
     });
 };
 
 module.exports = bamCust;
+
+

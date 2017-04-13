@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/paden-pace/bamazon/issues"
   },
-  "homepage": "https://github.com/paden-pace/bamazon#readme"
+  "homepage": "https://github.com/paden-pace/bamazon#readme",
+  "dependencies": {
+    "console.table": "^0.8.0"
+  }
 }

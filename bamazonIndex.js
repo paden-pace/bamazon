@@ -1,5 +1,4 @@
-var inquirer = require("fs");
-//var inquirer = require("file-share");
+var fs = require("fs");
 var inquirer = require("inquirer");
 var mysql = require('mysql');
 
@@ -17,23 +16,15 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
-var newAll = [];
+
 
 // connection.connect(function (err) {
 //     if (err) throw (error);
 //     console.log("connected as id " + connection.threadId);
 // });
 
-var options = function(){
-    connection.query('SELECT department_name, count(department_name) FROM products GROUP BY department_name HAVING count(*) >= 1 ORDER BY count(department_name) DESC', function(err, results){
-        if(err) throw err;
-        for (var i = 0; i <results.length; i++){
-            //console.log("Dept: " + results[i].department_name);
-            newAll.push(results[i].department_name);
-            //console.log(newAll);
-            //console.log("---------------------------------");
-        };
-    });
+var bamInd = function(){
+
   inquirer.prompt([
         {
             type: "list",
@@ -62,7 +53,8 @@ var options = function(){
 };
 
 
-options();
+bamInd();
 
 
 
+module.exports = bamInd;

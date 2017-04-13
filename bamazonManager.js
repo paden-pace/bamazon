@@ -1,10 +1,11 @@
 
-var inquirer = require("fs");
+var fs = require("fs");
 var inquirer = require("inquirer");
 var mysql = require('mysql');
 
 var bamSup = require('./bamazonSupervisor');
 var bamCust = require('./bamazonCustomer');
+var bamInd = require('./bamazonIndex.js');
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -20,7 +21,6 @@ var bamMan = function () {
     var query = "SELECT * FROM products";
     connection.query(query, function(err, results){
         if(err) throw err;
-        //console.log("test");
         for (var i = 0; i <results.length; i++){
             allProducts.push(results[i].product_name);
         };
@@ -37,22 +37,18 @@ var bamMan = function () {
         switch (user.selection) {
             case "Products for Sale":
                 seeItems();
-                //options();
                 break;
                 
             case "View Low Inventory":
                 lowInventory();
-                //options();
                 break;
             
             case "Add To Inventory":
                 addInventory();
-                //options();
                 break;
 
             case "Add New Product":
                 newProduct();
-                //options();
                 break;
 
 
@@ -66,7 +62,6 @@ var seeItems = function() {
     var query = "SELECT * FROM products";
     connection.query(query, function(err, results){
         if(err) throw err;
-        //console.log("test");
         for (var i = 0; i <results.length; i++){
             console.log("---------------------------------");
             console.log("Product Name: " + results[i].product_name);
@@ -87,7 +82,6 @@ var lowInventory = function(){
             if(results[i].stock_quantity <= 5){
                 console.log("Product: " + results[i].product_name);
                 console.log("In Stock: " + results[i].stock_quantity);
-                //console.log("Count: " + results[i].count(artist));
                 console.log("---------------------------------");
             };
         };
@@ -109,13 +103,11 @@ var addInventory = function(){
             name: "addQuant"
         }
     ]).then(function(man) {
-        console.log(man.addItem);
         connection.query('Select * FROM products WHERE product_name = ?', [man.addItem], function (err,results){
             var trueQuant = results[0].stock_quantity;
             var trueQuantInt = parseInt(trueQuant, 10);
             var addQuantInt = parseInt(man.addQuant, 10);
-            console.log("Request: " + addQuantInt);
-            console.log("Amount in Stock: " + trueQuantInt);
+            console.log("Quantity before restocking: " + trueQuantInt);
             var newQuant = (trueQuantInt + addQuantInt);
             connection.query('UPDATE products SET ? WHERE ?', [
                 {stock_quantity: newQuant},
@@ -162,7 +154,6 @@ var newProduct = function(){
             console.log("New Product " + addition.product + " has been added to inventory.");
             if(err) throw err;
         });
-        //console.log(addition.product +  " - " + addition.dept+  " - "+ addition.price+  " - "+ addition.quant);
     });
 };
 
