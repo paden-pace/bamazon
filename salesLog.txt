@@ -5,3 +5,4 @@ Clothing - (2) - Hats have been purchased.
 Furniture - (1) - Sofas have been purchased.
 Clothing - (20) - Hoodies have been purchased.
 Furniture - (30) - Beds have been purchased.
+Clothing - (1) - Shirts have been purchased.

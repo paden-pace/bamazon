@@ -63,7 +63,7 @@ var seeItems = function() {
     });
 };
 
-var purchaseReq = function (deptListItem, deptQuant){
+var purchaseReq = function (deptDept, deptListItem, deptQuant){
     connection.query('Select * FROM products WHERE product_name = ?', [deptListItem], function (err,results){
         var trueQuant = results[0].stock_quantity;
         var truePrice = results[0].price;
@@ -77,7 +77,7 @@ var purchaseReq = function (deptListItem, deptQuant){
                     name: "quant"
                 }
             ]).then(function(update) {
-                purchaseReq(deptListItem, update.quant);
+                purchaseReq(deptDept, deptListItem, update.quant);
             });
             
         } else if (deptQuant <= trueQuant){
@@ -96,6 +96,7 @@ var purchaseReq = function (deptListItem, deptQuant){
                 ], function(err, results){
                     if(err) throw err;
                 });
+            fs.appendFile("salesLog.txt", deptDept + " - (" + deptQuant + ") - " + deptListItem + "s have been purchased." + "\r\n");
             console.log("New Quantity in Stock is: " + newQuant);
         };
     });
@@ -129,8 +130,7 @@ var makeSelect = function() {
                     name: "quant"
                 }
             ]).then(function(dept) {
-                purchaseReq(dept.listItem, dept.quant);
-                fs.appendFile("salesLog.txt", select.dept + " - (" + dept.quant + ") - " + dept.listItem + "s have been purchased." + "\r\n");
+                purchaseReq(select.dept, dept.listItem, dept.quant);
             });
         });
     });
