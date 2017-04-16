@@ -130,7 +130,7 @@ var makeSelect = function() {
                 }
             ]).then(function(dept) {
                 purchaseReq(dept.listItem, dept.quant);
-                fs.appendFile("salesLog.txt", dept.quant + " - " + dept.listItem + "s have been purchased." + "\r\n");
+                fs.appendFile("salesLog.txt", select.dept + " - (" + dept.quant + ") - " + dept.listItem + "s have been purchased." + "\r\n");
             });
         });
     });

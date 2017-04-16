@@ -96,7 +96,10 @@ var viewSales = function(){
 
 var readSales = function() {
     fs.readFile("salesLog.txt", "utf8", function(err, data) {
+        console.log("-------------------------------------------");
+        console.log("Sales Log: ");
         console.log(data);
+        console.log("-------------------------------------------");
     });
 };
 

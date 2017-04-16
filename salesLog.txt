@@ -1,3 +1,7 @@
 
-1 - Hoodies have been purchased.
-3 - Walkmans have been purchased.
+Clothing - (1) - Hoodies have been purchased.
+Electronics - (3) - Walkmans have been purchased.
+Clothing - (2) - Hats have been purchased.
+Furniture - (1) - Sofas have been purchased.
+Clothing - (20) - Hoodies have been purchased.
+Furniture - (30) - Beds have been purchased.
